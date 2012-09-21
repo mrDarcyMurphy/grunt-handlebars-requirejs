@@ -31,7 +31,9 @@
     "handlebars": "~1.0.7"
   },
   "devDependencies": {
-    "grunt": "~0.3.15"
+    "grunt": "~0.3.15",
+    "grunt-contrib-clean": "~0.2.0",
+    "mocha": "*"
   },
   "keywords": [
     "gruntplugin", "handlebars", "requirejs"
