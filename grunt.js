@@ -41,11 +41,20 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     handlebars_requirejs: {
       basic: {
+        files: {
+          // folder : files
+          // files will be converted into modules and dumped into the folder
+          'tmp/basic/': ['test/fixtures/basic.hbs']
+        }
+      },
+      partialed: {
         options: {
-          namespace: 'JST'
+          makePartials: true
         },
         files: {
-          'tmp/basic.js': ['test/fixtures/basic.hbs']
+          // folder : files
+          // files will be converted into modules and dumped into the folder
+          'tmp/partialed/': ['test/fixtures/basic.hbs']
         }
       }
     },

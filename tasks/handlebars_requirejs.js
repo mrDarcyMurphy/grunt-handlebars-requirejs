@@ -19,9 +19,6 @@ module.exports = function(grunt) {
   var defaultProcessName = function(name) {
     name = name.substr(0, name.lastIndexOf('.'))
     return name
-
-    // define('tmpl/errors/404', ['handlebars'], function(Handlebars){
-    // return Handlebars.template(
   };
 
   // filename conversion for partials
@@ -33,7 +30,6 @@ module.exports = function(grunt) {
 
   grunt.registerMultiTask('handlebars_requirejs', 'Compile Handlebars templates to RequireJS modules.', function() {
 
-    var helpers = require('grunt-contrib-lib').init(grunt);
     var options = helpers.options(this, {namespace: 'JST'});
 
     grunt.verbose.writeflags(options, 'Options');
@@ -41,16 +37,8 @@ module.exports = function(grunt) {
     // TODO: ditch this when grunt v0.4 is released
     this.files = this.files || helpers.normalizeMultiTaskFiles(this.data, this.target);
 
-    var compiled, srcFiles, src, filename;
-    var partials = [];
-    var templates = [];
-    var output = [];
-
-    // TODO: implement this
-    var defineAs = options.defineAs || null
-
-    // assign regex for partial detection
-    var isPartial = options.partialRegex || /^_/;
+    var compiled, srcFiles, src, filename, outputFilename, partialName
+    var output = ""
 
     // assign filename transformation functions
     var processName = options.processName || defaultProcessName
@@ -64,34 +52,30 @@ module.exports = function(grunt) {
 
         try {
           compiled = require('handlebars').precompile(src);
-          // Forcing wrap since we'll need it in the module
-          compiled = 'Handlebars.template('+compiled+')';
+          compiled = 'Handlebars.template('+compiled+')'; // Forcing wrap since we'll need it in the module
         } catch (e) {
           grunt.log.error(e);
           grunt.fail.warn('Handlebars failed to compile '+file+'.');
         }
 
-        // THIS IS GOING TO NEED THE MOST WORK
-        // not sure yet how I want to handle partials since they're ALL going to be partials when they hit hte front-end
+        filename = processName(file);
 
-        // // register partial or add template to namespace
-        // if(isPartial.test(_.last(file.split('/')))) {
-        //   filename = processPartialName(file);
-        //   partials.push('Handlebars.registerPartial('+JSON.stringify(filename)+', '+compiled+');');
-        // } else {
-          filename = processName(file);
-          templates.push('define('+JSON.stringify(filename)+",['handlebars'], function(Handlebars){\n return "+compiled+'\n});')
-        // }
+        output  = ""
+        output += "define(['handlebars'], function(Handlebars){\n"
+        output += "var template = " + compiled + "\n"
+        if (options.makePartials) {
+          partialName = filename.replace(/\//g,'.')
+          output += "Handlebars.registerPartial('"+partialName+"', template)\n"
+        }
+        output += "return template\n"
+        output += "});\n"
+
+        // TODO: could maybe test for a trailing slash on the files.dest here
+        outputFilename = files.dest + filename + '.js'
+        grunt.file.write(outputFilename, output);
+        grunt.log.writeln('File "' + outputFilename + '" created.');
+
       });
-
-      output = output.concat(partials, templates);
-      console.log('output:')
-      console.log(output)
-
-      if (output.length > 0) {
-        grunt.file.write(files.dest, output.join('\n\n'));
-        grunt.log.writeln('File "' + files.dest + '" created.');
-      }
     });
   });
 }
