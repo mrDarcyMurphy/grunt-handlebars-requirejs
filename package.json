@@ -1,7 +1,7 @@
 {
   "name": "grunt-handlebars-requirejs",
   "description": "Precompile Handlebars templates to RequireJS modules.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/mrDarcyMurphy/grunt-handlebars-requirejs",
   "author": {
     "name": "Darcy Murphy",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "handlebars": "~1.0.7",
-    "grunt-contrib-lib": "~0.2.0"
+    "grunt-lib-contrib": "~0.3.0"
   },
   "devDependencies": {
     "grunt": "~0.3.15",
