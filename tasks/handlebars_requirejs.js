@@ -46,7 +46,7 @@ module.exports = function(grunt) {
 
     // iterate files, processing partials and templates separately
     this.files.forEach(function(files) {
-      srcFiles = grunt.file.expandFiles(files.src);
+      srcFiles = grunt.file.expand(files.src);
       srcFiles.forEach(function(file) {
         src = grunt.file.read(file);
 
